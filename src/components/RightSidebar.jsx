@@ -4,7 +4,7 @@ import dexButton from '../../assets/dex_button.png';
 import { ExternalLink, Copy, Check } from 'lucide-react';
 import { getUsers } from '../utils/assetLoader';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://jinstagram-server.onrender.com/api';
 
 const RightSidebar = () => {
     const [copied, setCopied] = useState(false);

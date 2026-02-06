@@ -4,7 +4,7 @@ import { Grid, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLikes } from '../context/LikesContext';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://jinstagram-server.onrender.com/api';
 
 const Profile = () => {
     const { username } = useParams();
