@@ -76,7 +76,7 @@ const RightSidebar = () => {
 
                     {/* X (Twitter) Link - Icon only */}
                     <a
-                        href="https://x.com/__Jinstagram__"
+                        href="https://x.com/jinstagram_app"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center w-16 h-16 bg-ig-secondary rounded-lg hover:bg-gray-800 transition-colors border border-ig-separator group"
