@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { getAssets } from '../utils/assetLoader';
+import { getAssets, getUserBio } from '../utils/assetLoader';
 import { Grid, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useLikes } from '../context/LikesContext';
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -9,6 +10,7 @@ const Profile = () => {
     const { username } = useParams();
     const { users } = getAssets();
     const userImages = users[username] || [];
+    const { likesMap } = useLikes();
 
     // State for user data
     const [userData, setUserData] = useState({ followers: 0, following: 0 });
@@ -16,6 +18,9 @@ const Profile = () => {
 
     // Fetch user data
     useEffect(() => {
+        // Scroll to top when profile loads
+        window.scrollTo(0, 0);
+
         fetch(`${API_URL}/user/${encodeURIComponent(username)}`)
             .then(res => res.json())
             .then(data => setUserData(data))
@@ -87,7 +92,7 @@ const Profile = () => {
 
                     <div className="text-sm">
                         <div className="font-bold">{username}</div>
-                        <div>Official account.</div>
+                        <div>{getUserBio(username)}</div>
                     </div>
                 </div>
             </div>
@@ -104,7 +109,7 @@ const Profile = () => {
                     <div key={idx} className="aspect-square bg-gray-900 group relative cursor-pointer overflow-hidden">
                         <img src={img} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 text-white font-bold">
-                            <div className="flex items-center gap-1"><Heart className="fill-white" size={20} /> {Math.floor(Math.random() * 1000)}</div>
+                            <div className="flex items-center gap-1"><Heart className="fill-white" size={20} /> {(likesMap[img] || 0).toLocaleString()}</div>
                         </div>
                     </div>
                 ))}

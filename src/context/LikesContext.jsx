@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { getAssets } from '../utils/assetLoader';
 
 const LikesContext = createContext();
 
@@ -15,7 +16,31 @@ export const LikesProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        refreshLikes();
+        const initializeAndFetchLikes = async () => {
+            try {
+                // Get all unique image paths from both feed and users
+                const { feed, users } = getAssets();
+                const allImagePaths = new Set([...feed]);
+
+                Object.values(users).forEach(userImages => {
+                    userImages.forEach(img => allImagePaths.add(img));
+                });
+
+                // Initialize random likes for any new images
+                await fetch(`${API_URL}/init-likes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageIds: Array.from(allImagePaths) })
+                });
+
+                // Now fetch the actual counts
+                refreshLikes();
+            } catch (err) {
+                console.error("Failed to initialize or fetch likes", err);
+            }
+        };
+
+        initializeAndFetchLikes();
     }, []);
 
     const handleLike = async (imageId, isCurrentlyLiked) => {

@@ -3,19 +3,22 @@ import { NavLink } from 'react-router-dom';
 import { cn } from '../utils/cn'; // quick utility
 import { getUsers } from '../utils/assetLoader';
 
+import logo from '../../assets/logo.png';
+
 const Sidebar = () => {
     const users = getUsers();
 
     return (
         <div className="fixed left-0 top-0 h-full w-[244px] border-r border-ig-separator bg-ig-primary p-4 hidden md:flex flex-col">
-            <div className="mb-8 px-4 py-4">
-                <h1 className="text-2xl font-bold italic font-serif">Instagram</h1>
+            <div className="mb-8 px-4 py-4 flex items-center gap-2">
+                <img src={logo} alt="Jinstagram Logo" className="w-8 h-8 object-contain" />
+                <h1 className="text-2xl font-bold italic font-serif">Jinstagram</h1>
             </div>
 
             <nav className="flex-1 space-y-2">
                 <NavItem to="/" icon={<Home size={24} />} label="Home" />
                 <NavItem icon={<Search size={24} />} label="Search" onClick={() => { }} />
-                <NavItem icon={<Compass size={24} />} label="Explore" onClick={() => { }} />
+                <NavItem to="/explore" icon={<Compass size={24} />} label="Explore" />
                 <NavItem icon={<MessageCircle size={24} />} label="Messages" onClick={() => { }} />
                 <NavItem icon={<Heart size={24} />} label="Notifications" onClick={() => { }} />
                 <NavItem icon={<PlusSquare size={24} />} label="Create" onClick={() => { }} />

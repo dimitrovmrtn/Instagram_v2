@@ -1,11 +1,54 @@
 import { Heart, MessageCircle, Send, Bookmark } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useLikes } from '../context/LikesContext';
 
-const Post = ({ image, username, avatar }) => {
+// Generate random timestamp
+const getRandomTimestamp = () => {
+    const timestamps = [
+        '1 minute ago',
+        '5 minutes ago',
+        '15 minutes ago',
+        '30 minutes ago',
+        '45 minutes ago',
+        '1 hour ago',
+        '2 hours ago',
+        '3 hours ago',
+        '5 hours ago',
+        '8 hours ago',
+        '12 hours ago',
+        '18 hours ago',
+        '1 day ago',
+        '2 days ago',
+        '3 days ago',
+        '5 days ago',
+        '1 week ago',
+        '2 weeks ago',
+        '3 weeks ago',
+        '1 month ago',
+        '2 months ago',
+        '3 months ago',
+        '4 months ago',
+        '5 months ago',
+        '6 months ago',
+        '7 months ago',
+        '8 months ago',
+        '9 months ago',
+        '10 months ago',
+        '11 months ago'
+    ];
+    return timestamps[Math.floor(Math.random() * timestamps.length)];
+};
+
+const Post = ({ image, username, avatar, description = "Found this interesting image in the archives... #files #leak" }) => {
     const [liked, setLiked] = useState(false);
+    const [showHeart, setShowHeart] = useState(false);
     const { likesMap, handleLike } = useLikes();
+    const navigate = useNavigate();
+
+    // Generate timestamp once per post (won't change on re-render)
+    const timestamp = useMemo(() => getRandomTimestamp(), [image]);
 
     // Unique ID for the image - simply the filename/path
     const imageId = image;
@@ -14,6 +57,26 @@ const Post = ({ image, username, avatar }) => {
     const toggleLike = () => {
         handleLike(imageId, liked);
         setLiked(!liked);
+
+        // Show heart animation
+        if (!liked) {
+            setShowHeart(true);
+        }
+    };
+
+    // Auto-hide heart after 1.5 seconds
+    useEffect(() => {
+        if (showHeart) {
+            const timer = setTimeout(() => {
+                setShowHeart(false);
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [showHeart]);
+
+    const handleUsernameClick = (e) => {
+        e.preventDefault();
+        navigate(`/profile/${encodeURIComponent(username)}`);
     };
 
     return (
@@ -27,7 +90,12 @@ const Post = ({ image, username, avatar }) => {
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-semibold text-sm leading-none">{username}</span>
+                        <span
+                            className="font-semibold text-sm leading-none cursor-pointer hover:opacity-70 transition-opacity"
+                            onClick={handleUsernameClick}
+                        >
+                            {username}
+                        </span>
                         <span className="text-xs text-gray-400 mt-0.5">Little Saint James Island in U. S. Virgin Islands</span>
                     </div>
                 </div>
@@ -36,8 +104,8 @@ const Post = ({ image, username, avatar }) => {
 
             {/* Image */}
             <div className="w-full bg-gray-900 overflow-hidden relative" onDoubleClick={toggleLike}>
-                <img src={image} alt="Post" className="w-full h-auto object-contain" loading="lazy" />
-                {liked && (
+                <img src={image} alt="Post" className="w-full h-auto object-contain" />
+                {showHeart && (
                     <motion.div
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -65,10 +133,15 @@ const Post = ({ image, username, avatar }) => {
                 <div className="font-semibold text-sm mb-1">{likes.toLocaleString()} likes</div>
 
                 <div className="text-sm">
-                    <span className="font-semibold mr-2">{username}</span>
-                    <span className="text-gray-300">Found this interesting image in the archives... #files #leak</span>
+                    <span
+                        className="font-semibold mr-2 cursor-pointer hover:opacity-70 transition-opacity"
+                        onClick={handleUsernameClick}
+                    >
+                        {username}
+                    </span>
+                    <span className="text-gray-300">{description}</span>
                 </div>
-                <div className="text-gray-500 text-xs mt-1 uppercase">2 HOURS AGO</div>
+                <div className="text-gray-500 text-xs mt-1">{timestamp}</div>
             </div>
         </div>
     );

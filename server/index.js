@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { getLikes, incrementLike, decrementLike, getUser, toggleFollow } from './db.js';
+import { getLikes, incrementLike, decrementLike, getUser, toggleFollow, initLikes } from './db.js';
 
 const app = express();
 const PORT = 3000;
@@ -18,6 +18,19 @@ app.get('/api/likes', (req, res) => {
             return acc;
         }, {});
         res.json(likesMap);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/init-likes', (req, res) => {
+    try {
+        const { imageIds } = req.body;
+        if (!Array.isArray(imageIds)) {
+            return res.status(400).json({ error: 'imageIds must be an array' });
+        }
+        initLikes(imageIds);
+        res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

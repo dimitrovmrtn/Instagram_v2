@@ -16,6 +16,23 @@ db.exec(`
   );
 `);
 
+export const initLikes = (imageIds) => {
+    const checkStmt = db.prepare('SELECT count FROM likes WHERE imageId = ?');
+    const insertStmt = db.prepare('INSERT INTO likes (imageId, count) VALUES (?, ?)');
+
+    const transaction = db.transaction((ids) => {
+        for (const id of ids) {
+            const existing = checkStmt.get(id);
+            if (!existing) {
+                const randomLikes = Math.floor(Math.random() * 2500000) + 15;
+                insertStmt.run(id, randomLikes);
+            }
+        }
+    });
+
+    transaction(imageIds);
+};
+
 export const getLikes = () => {
     const stmt = db.prepare('SELECT * FROM likes');
     return stmt.all();
@@ -56,12 +73,24 @@ export const getLike = (imageId) => {
 };
 
 export const incrementLike = (imageId) => {
-    // Upsert equivalent for SQLite
-    const stmt = db.prepare(`
-        INSERT INTO likes (imageId, count) VALUES (?, 1)
-        ON CONFLICT(imageId) DO UPDATE SET count = count + 1
-    `);
-    stmt.run(imageId);
+    // Check if image already has likes
+    const existing = getLike(imageId);
+
+    if (!existing) {
+        // Initialize with random count between 15 and 2,500,000
+        const randomLikes = Math.floor(Math.random() * 2500000) + 15;
+        const stmt = db.prepare(`
+            INSERT INTO likes (imageId, count) VALUES (?, ?)
+        `);
+        stmt.run(imageId, randomLikes);
+    } else {
+        // Increment existing count
+        const stmt = db.prepare(`
+            UPDATE likes SET count = count + 1 WHERE imageId = ?
+        `);
+        stmt.run(imageId);
+    }
+
     return getLike(imageId);
 };
 
