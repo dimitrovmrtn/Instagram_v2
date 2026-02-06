@@ -116,14 +116,14 @@ const Profile = () => {
             {/* Post Modal */}
             {selectedImage && (
                 <div 
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
                     onClick={() => setSelectedImage(null)}
                 >
                     <div 
-                        className="bg-black w-full max-w-[930px] mx-4 rounded shadow-lg relative"
+                        className="bg-black w-full max-w-[930px] max-h-[90vh] rounded shadow-lg relative flex flex-col overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="flex items-center justify-between p-3 border-b border-ig-separator mt-[100px]">
+                        <div className="flex items-center justify-between p-3 border-b border-ig-separator flex-shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-800">
                                     {userImages[0] && <img src={userImages[0]} className="w-full h-full object-cover" />}
@@ -144,7 +144,7 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        <div className="p-4">
+                        <div className="p-4 overflow-y-auto">
                             <Post image={selectedImage} username={username} avatar={userImages[0]} />
                         </div>
                     </div>
