@@ -10,7 +10,7 @@ const RightSidebar = () => {
     const [copied, setCopied] = useState(false);
     const [followStates, setFollowStates] = useState({});
     const navigate = useNavigate();
-    const tokenAddress = "7axGPDNkUGa6msAAzbdci1jyUbRrTC8FnXaF4Co8pump";
+    const tokenAddress = "Updating soon... Check X!";
 
     // Get 3 random users for suggestions
     const suggestedUsers = useMemo(() => {
